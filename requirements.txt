@@ -3,3 +3,6 @@ SQLAlchemy[asyncio]>=2.0.36
 aiosqlite>=0.20.0
 python-dotenv>=1.0.1
 jdatetime>=5.0
+fastapi>=0.115
+uvicorn[standard]>=0.32
+jinja2>=3.1

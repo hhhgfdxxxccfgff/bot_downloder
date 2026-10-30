@@ -28,6 +28,9 @@ class Settings:
     database_url: str
     caption_template: str
     link_btn_text: str
+    webapp_url: str
+    web_port: int
+    stream_ttl: int
 
 
 ADMIN_IDS = _admins(os.getenv("ADMIN_IDS", ""))
@@ -40,6 +43,9 @@ settings = Settings(
     database_url=os.getenv("DATABASE_URL", "sqlite+aiosqlite:///data.db"),
     caption_template=os.getenv("DEFAULT_CAPTION", "🎧 {title}"),
     link_btn_text=os.getenv("LINK_BTN_TEXT", "📥 دانلود"),
+    webapp_url=os.getenv("WEBAPP_URL", "").strip(),
+    web_port=int(os.getenv("WEB_PORT", "8000")),
+    stream_ttl=int(os.getenv("STREAM_TTL", "600")),
 )
 
 if not settings.bot_token:
