@@ -6,7 +6,6 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Channel, FileRequest, MediaFile, User
-from app.keyboards.reply import ADMIN_MENU
 from app.middlewares.access import AdminOnly
 from app.services.caption import human_size
 from app.services.channels import add_channel

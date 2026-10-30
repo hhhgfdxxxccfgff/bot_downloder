@@ -77,14 +77,31 @@ class Referral(Base):
 
 
 class Drop(Base):
-    """انتشار زمان‌بندی‌شده (فاز‌های بعدی)"""
+    """یک دراپ: فایلی که قراره یه زمان مشخص منتشر بشه و قبلش قفله"""
+
     __tablename__ = "drops"
 
     id: Mapped[int] = mapped_column(primary_key=True)
     file_id: Mapped[int] = mapped_column(ForeignKey("media_files.id"), unique=True)
-    release_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    teaser_text: Mapped[str] = mapped_column(String(512), default="")
+    release_at: Mapped[datetime] = mapped_column(DateTime)
+    teaser_text: Mapped[str] = mapped_column(String(1024), default="")
+    # شرط‌های باز شدن زودتر: {"channels": [chat_id...], "referrals": n, "code": "..."}
+    conditions: Mapped[str] = mapped_column(String(1024), default="{}")
+    # چنلی که تیزر توش پست شده
+    teaser_channel_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
+    teaser_msg_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    released: Mapped[bool] = mapped_column(Boolean, default=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
+
+
+class DropUnlock(Base):
+    """کاربرایی که شرط‌های باز شدن زودتر رو کامل کردن"""
+    __tablename__ = "drop_unlocks"
+
+    file_id: Mapped[int] = mapped_column(ForeignKey("media_files.id"), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), primary_key=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
 def new_code() -> str:

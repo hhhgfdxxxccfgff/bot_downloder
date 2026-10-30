@@ -8,8 +8,9 @@ from aiogram.fsm.storage.memory import MemoryStorage
 
 from app.config import settings
 from app.db.base import init_db
-from app.handlers import admin, start, upload
+from app.handlers import admin, drops, start, upload
 from app.middlewares.db import DbSessionMiddleware
+from app.services.scheduler import run_scheduler
 
 
 async def main() -> None:
@@ -23,7 +24,7 @@ async def main() -> None:
     dp.message.middleware(DbSessionMiddleware())
     dp.callback_query.middleware(DbSessionMiddleware())
 
-    dp.include_routers(start.router, upload.router, admin.router)
+    dp.include_routers(start.router, upload.router, drops.router, admin.router)
 
     bot = Bot(
         token=settings.bot_token,
@@ -35,8 +36,14 @@ async def main() -> None:
     except Exception:
         pass
 
+    scheduler_task = asyncio.create_task(run_scheduler(bot))
     logging.info("بات بالا اومد ✅")
-    await dp.start_polling(bot, allowed_updates=["message", "callback_query", "my_chat_member"])
+    try:
+        await dp.start_polling(
+            bot, allowed_updates=["message", "callback_query", "my_chat_member"]
+        )
+    finally:
+        scheduler_task.cancel()
 
 
 if __name__ == "__main__":
